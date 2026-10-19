@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Presentation</title>
+
+  <!-- Open connections to Figma's servers before the player asks for them -->
+  <link rel="preconnect" href="https://embed.figma.com">
+  <link rel="preconnect" href="https://www.figma.com">
+  <link rel="preconnect" href="https://static.figma.com" crossorigin>
+  <link rel="dns-prefetch" href="https://s3-alpha.figma.com">
+  <link rel="dns-prefetch" href="https://figma-alpha-api.s3.us-west-2.amazonaws.com">
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #111;
+      overflow: hidden;
+    }
+    iframe {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      border: 0;
+      opacity: 0;
+      transition: opacity .4s ease;
+    }
+    iframe.ready { opacity: 1; }
+
+    /* Loading screen shown until the presentation is ready */
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: #111 center / contain no-repeat;
+      transition: opacity .4s ease;
+    }
+    #loader.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="loader"><div class="spinner"></div></div>
+  <iframe id="figma" allowfullscreen title="Presentation"></iframe>
+
+  <script>
+    // 👉 Paste your Figma share link between the quotes.
+    const FIGMA_URL = "https://www.figma.com/proto/smbNEEn4j0ulqkfgJx5EdW/Shared-content?node-id=3073-21289&p=f&viewport=269%2C-467%2C0.02&t=5nDvM05dPTyXjGrq-8&scaling=scale-down&content-scaling=fixed&page-id=3073%3A21221&hide-ui=1";
+
+    // Optional: export your first slide as an image (e.g. cover.png), upload it
+    // next to index.html, and put its name here. It shows instantly while Figma loads.
+    const COVER_IMAGE = "";
+
+    // Build Figma's direct embed URL (skips a redirect)
+    function toEmbedUrl(link) {
+      try {
+        const u = new URL(link);
+        u.hostname = "embed.figma.com";
+        u.searchParams.set("embed-host", "share");
+        return u.toString();
+      } catch (e) {
+        return "https://www.figma.com/embed?embed_host=share&url=" +
+          encodeURIComponent(link);
+      }
+    }
+
+    const loader = document.getElementById("loader");
+    const frame = document.getElementById("figma");
+
+    if (COVER_IMAGE) {
+      loader.style.backgroundImage = "url('" + COVER_IMAGE + "')";
+    }
+
+    frame.addEventListener("load", function () {
+      frame.classList.add("ready");
+      loader.classList.add("hidden");
+    });
+
+    frame.src = toEmbedUrl(FIGMA_URL);
+  </script>
+</body>
+</html>
